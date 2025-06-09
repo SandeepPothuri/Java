@@ -8,6 +8,7 @@ import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -17,7 +18,9 @@ public class IngestTransactionEventListiner implements ApplicationListener<Trans
     private final EvaluationContext context = new StandardEvaluationContext();
 
     @Override
+    @Async
     public void onApplicationEvent(TransactionEvent event) {
+        log.info("IngestTransactionEventListiner Thread Name: " + Thread.currentThread().getName());
         JsonNode jsonNode = event.getPayload();
         // Add jsonNode to SpEL context
         context.setVariable("input", jsonNode);
@@ -26,8 +29,7 @@ public class IngestTransactionEventListiner implements ApplicationListener<Trans
         Boolean shouldProcess = parser.parseExpression(condition).getValue(context, Boolean.class);
 
         if (Boolean.TRUE.equals(shouldProcess)) {
-            log.info("IngestTransactionEventListiner received custom event - ", event.getPayload());
-            System.out.println("IngestTransactionEventListiner received custom event - " + event.getPayload());
+            log.info("IngestTransactionEventListiner received custom event - "+ event.getPayload());
         }
 
     }

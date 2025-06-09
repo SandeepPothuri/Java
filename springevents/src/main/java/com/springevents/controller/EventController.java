@@ -25,6 +25,7 @@ public class EventController {
     @PostMapping
     public ResponseEntity<JsonNode> postMessage(@RequestBody JsonNode payload) {
         try {
+            log.info("EventController Thread Name: " + Thread.currentThread().getName());
             log.info("payload Received in controller : ", payload);
             //Add observer to persist the raw payload
 
